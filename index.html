@@ -53,6 +53,23 @@
 
 <script>
 
+(function() {
+    var cors_api_host = 'cors-anywhere.herokuapp.com';
+    var cors_api_url = 'https://' + cors_api_host + '/';
+    var slice = [].slice;
+    var origin = window.location.protocol + '//' + window.location.host;
+    var open = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function() {
+        var args = slice.call(arguments);
+        var targetOrigin = /^https?:\/\/([^\/]+)/i.exec(args[1]);
+        if (targetOrigin && targetOrigin[0].toLowerCase() !== origin &&
+            targetOrigin[1] !== cors_api_host) {
+            args[1] = cors_api_url + args[1];
+        }
+        return open.apply(this, args);
+    };
+})();
+
     mapboxgl.accessToken = 'pk.eyJ1IjoieXVuemhhbzIxIiwiYSI6ImNreWxnbDR2ejF5MjIyd3AwNXA1cDl1eGsifQ.64sJi7Q8xOekHT7A6IljEQ';
 
         // Load a new map in the 'map' HTML div
@@ -66,6 +83,7 @@
 
     map.on('load', function(data) { 
         // https://wilsjame.github.io/how-to-nasa/#:~:text=Head%20over%20to%20api.NASA,Astronomy%20Picture%20Of%20The%20Day
+        // https://medium.com/@dtkatz/3-ways-to-fix-the-cors-error-and-how-access-control-allow-origin-works-d97d55946d9 
         var url = "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+*+from+pscomppars&format=json"
         var apikey = "50jiaKZWShuLw5q3QlC5vucCIWnxh4waOhFs3zHE"
         var apod = "https://api.nasa.gov/planetary/apod"
@@ -74,36 +92,29 @@
         function(ExoData) {
             // Create new GeoJSON  
             //console.log(ExoData);
-            console.log(ExoData[1]); 
+            //console.log(ExoData[1]); 
     
             //To map the data in Mapbox, it needs to be in GeoJSON format. Going to create new GeoJSON
             var myGeojson = {};
             myGeojson.type = 'FeatureCollection'; //Specify type is feature collection
             myGeojson.features = []; //Create features array
-
-                //var i;
-                //for (i = 0; i < ExoData.length; i++) { //Loop through all docking stations
-                    
-                    /* var PlanetName = parseFloat(ExoData[0].value);
-                    //var PropFull = NbBikes/(NbBikes+NbEmptyDocks);
-                    
-                        var newFeature = { //Create each docking station feature as JSON object
-                            "type": "Feature",
-                            "geometry": {
-                                "type": "Point",
-                                "coordinates": [BikeData[i].lon, BikeData[i].lat]
-                            },
-                            "properties": {
-                                "NbBikes": NbBikes,
-                                "NbEmptyDocks": NbEmptyDocks,
-                                "NbTotalDocks": NbTotalDocks,
-                                "PropFull": PropFull
-                            }
+  
+                var PlanetName = parseFloat(ExoData['pl_name'].value);
+                //var PropFull = NbBikes/(NbBikes+NbEmptyDocks);
+                
+                    var newFeature = { //Create each docking station feature as JSON object
+                        "type": "Feature",
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [ExoData['ra'].lon, ExoData['dec'].lat]
+                        },
+                        "properties": {
+                            "PlanetName": PlanetName,
+                        
                         }
-                        //myGeojson.features.push(newFeature); //Add the new feature to the features array 
-                    }*/
-                //})
-            })
+                    }
+                    myGeojson.features.push(newFeature); //Add the new feature to the features array 
+                })
             })
 </script>
 </body>
