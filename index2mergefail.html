@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!--
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    -->
+    <meta name="viewport" content="width=device-width, initial-scale=3.0">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.css" rel="stylesheet" />
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.0.1/mapbox-gl.js"></script>
+    <script charset="utf-8" src="https://d3js.org/d3.v4.min.js"></script>
+    <link href='exostyles.css' rel='stylesheet' />
+    <title>Document</title>
+</head>
+
+
+<body>
+    <link href='exostyles.css' rel='stylesheet' />
+    <div id="map"></div>
+    <!--
+    <div id="title">
+        <h2>Exoplanet Map</h2>
+         <p class="credit">Data: <a href="https://exoplanetarchive.ipac.caltech.edu/">NASA Exoplanet Archive API</a>.</p>
+    </div> -->
+    
+    <div class='map-overlay top'>
+        <div class='map-overlay-inner'>
+            <h2>Map of Confirmed Exoplanets</h2>
+            <label id="year"></label>
+                <table><tr><td>
+                    <input id='slider' type='range' min='0' max='33' step='1' value='0' list='tickmarks' />
+                    <datalist id="tickmarks">
+                            <option value="0" label="1989">
+                            <option value="1">
+                            <option value="2">
+                            <option value="3">
+                            <option value="4">
+                            <option value="5">
+                            <option value="6" label="1995">
+                            <option value="7">
+                            <option value="8">
+                            <option value="9">
+                            <option value="10">
+                            <option value="11" label="2000">
+                            <option value="12">
+                            <option value="13">
+                            <option value="14">
+                            <option value="15">
+                            <option value="16" label="2005">
+                            <option value="17">
+                            <option value="18">
+                            <option value="19">
+                            <option value="20">
+                            <option value="21" label="2010">
+                            <option value="22">
+                            <option value="23">
+                            <option value="24">
+                            <option value="25">
+                            <option value="26" label="2015">
+                            <option value="27">
+                            <option value="28">
+                            <option value="29">
+                            <option value="30">
+                            <option value="31" label="2020">
+                            <option value="32">
+                            <option value="33" label="2022">
+                            </datalist>
+                            </td>
+                            <td>
+                            <label id='year'>2022</label>
+                </td></tr></table> 
+                <p class="credit">Data: 
+                    <a href="https://exoplanetarchive.ipac.caltech.edu/">NASA Exoplanet Archive API</a>. 
+                    Data Retrieved: March 3, 2022
+                </p>
+        </div>
+        <div class="map-overlay-inner">
+            <div id="legend" class="legend">
+                <div class="bar"></div>
+                <div>Magnitude (m)</div>
+            </div>
+        </div>
+    </div>
+
+<script>
+     mapboxgl.accessToken = 'pk.eyJ1IjoieXVuemhhbzIxIiwiYSI6ImNreWxnbDR2ejF5MjIyd3AwNXA1cDl1eGsifQ.64sJi7Q8xOekHT7A6IljEQ';
+
+    // Load a new map in the 'map' HTML div
+    var map = new mapboxgl.Map({
+        container: 'map', // container id
+        style: 'mapbox://styles/mapbox/dark-v10', // Using the standard Mapbox Dark style
+        center: [0, 0], // starting position [lng, lat]
+        zoom: 2 // starting zoom
+    });
+
+     
+    // References: 
+    // https://docs.mapbox.com/mapbox-gl-js/example/timeline-animation/
+    // https://docs.mapbox.com/mapbox-gl-js/example/timeline-animation/
+           
+
+    map.on('load', function(data) {         
+        d3.csv("ExoData.csv", function(ExoData) {  // Load JSON data and work on data
+            //console.log(ExoData[0]);
+
+            const years = ['1989','1990','1991','1992','1993','1994','1995',
+            '1996','1997','1998','1999','2000','2001','2002','2003','2004','2005',
+            '2006','2007','2008','2009','2010','2011','2012','2013','2014','2015',
+            '2016','2017','2018','2019','2020','2021','2022'];
+
+            document.getElementById('slider').addEventListener('input', (e) => {
+                const year = parseInt(e.target.value); //define year as the current slider target
+                document.getElementById('year').textContent = years[year];  //Set the label to the correct year
+                
+                
+                     
+                
+                var i;
+                for (i = 0; i < ExoData.length; i++) { //Loop through all exoplanets
+                    if (ExoData[i]['disc_year'] == year) {
+
+                        var exoGeojson = {}; // Create new GeoJSON  
+                        exoGeojson.type = 'FeatureCollection'; //Specify type is feature collection
+                        exoGeojson.features = []; //Create features array     
+                        
+                        var newFeature = { //Create each exoplanet feature as JSON object
+                            "type": "Feature",
+                            "geometry": {
+                                "type": "Point",
+                                "coordinates": [ ExoData[i].long, ExoData[i].lat ]
+                            },//geometry
+                            "properties": {
+                                "PlanetName": ExoData[i]['pl_name'],
+                                "DiscYear": ExoData[i]['disc_year']
+                            }//properties
+                        } //newFeature
+                        exoGeojson.features.push(newFeature); //Add the new feature to the features array 
+
+                        map.addSource('ExoplanetGeojson', { //Add the geojson to the map.
+                            'type': 'geojson',
+                            'data': exoGeojson,
+                            'cluster': true,
+                            'clusterRadius': 1, // Radius of each cluster when clustering points (defaults to 50)
+                        });
+
+                        map.addLayer({
+                            id: 'clusters',
+                            source: 'ExoplanetGeojson',  
+                                    //'layout': {'visibility': 'visible'},
+                            type: 'circle',
+                            //filter: ['has', 'point_count'],
+                            paint: {
+                                'circle-color': '#ffffff', /*
+                                    ['step',
+                                    ['get', 'point_count'],
+                                    '#ffffff', //circle-color under thresh
+                                    1, //point count threshold
+                                    '#ffffff', //circle-color over thresh
+                                    ],  */
+                                'circle-opacity': 0.6,
+                                //'circle-stroke-width': 0.1,
+                                //'circle-stroke-color': '#ffffff',
+                                //'circle-stroke-opacity': 1,
+                                'circle-radius': 6  /*
+                                    ['step',
+                                    ['get', 'point_count'],
+                                    3, //circle-radius
+                                    2, //point count threshold
+                                    6 //circle-radius
+                                    ] */
+                            } // paint 
+                        }) // addLayer
+
+                        map.addLayer({
+                            id: 'cluster-count',
+                            type: 'symbol',
+                            source: 'ExoplanetGeojson',
+                            //filter: ['has', 'point_count'],
+                            layout: {
+                                'text-field': '{point_count_abbreviated}',
+                                'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+                                //'test-color'
+                                'text-size': 12
+                            }
+                            });
+                        
+                        map.addLayer({
+                            id: 'unclustered-point',
+                            type: 'circle',
+                            source: 'ExoplanetGeojson',
+                            //filter: ['!', ['has', 'point_count']],
+                            paint: {
+                                'circle-color': '#f55742',
+                                'circle-opacity': 0.6,
+                                'circle-radius': 4,
+                                //'circle-stroke-width': 1,
+                                //'circle-stroke-color': '#fff'
+                            }
+                            }); 
+
+                } // if year
+            } //for loop
+                
+            }); // EventListener
+
+        }) // d3.csv
+    }) // map.on
+
+
+/*
+    var mypopup = new mapboxgl.Popup({offset:[150,50],closeButton: false});
+    // Another event listener that adds the popup when the user puts their cursor over the tube circles
+    map.on('mouseover', 'Exoplanets', function (e) {
+        mypopup.setLngLat(e.features[0].geometry.coordinates).setHTML(
+            "<h3>Planet Name" + e.features[0].properties.PlanetName + 
+            "</h3>Discovery Year: " + e.features[0].properties.DiscYear /*+
+            "<br />2009: " + e.features[0].properties.EE2009 + "m<br />2010: " + e.features[0].properties.EE2010 + 
+            "m<br/>2011: " + e.features[0].properties.EE2011 + "m<br />2012: " + e.features[0].properties.EE2012 + 
+            "m<br />2013: " + e.features[0].properties.EE2013 + "m<br />2014: " + e.features[0].properties.EE2014 + 
+            "m<br />2015: " + e.features[0].properties.EE2015 + "m<br />2016: " + e.features[0].properties.EE2016 + 
+            "m<br />2017: " + e.features[0].properties.EE2017 + "m" 
+        ).addTo(map);
+    });
+
+    // Change the cursor to a pointer when the mouse is over the stations layer.
+    map.on('mouseenter', 'Exoplanets', function () {
+        map.getCanvas().style.cursor = 'pointer';
+    });
+
+    // Change it back to a pointer when it leaves and remove the popup window.
+    map.on('mouseleave', 'Exoplanets', function () {
+        map.getCanvas().style.cursor = '';
+    mypopup.remove();
+    });
+
+    */
+
+</script>
+
+<!--
+<a-scene embedded>
+    <a-entity id="globeID" class="collidable" scale="0.1 0.1 0.1" globe="
+        globe-image-url:
+        https://upload.wikimedia.org/wikipedia/commons/0/04/Solarsystemscope_texture_8k_ea
+        rth_daymap.jpg;
+        bump-image-url:
+        https://upload.wikimedia.org/wikipedia/commons/f/fb/Solarsystemscope_texture_8k_ea
+        rth_normal_map.tif">
+    </a-entity>
+    <a-entity camera position="0 0 25"
+                look-controls
+                id="user"
+                wasd-controls="acceleration: 45; fly: true;">
+    <a-cursor color="lavender" opacity="0.5" raycaster="objects:
+    .collidable"></a-cursor>
+    </a-entity>
+    <a-sky color="#001"></a-sky>
+</a-scene>
+-->
+    
+</body>
+</html>
+
+
+

@@ -1,0 +1,55 @@
+   /* 
+    // https://medium.com/@dtkatz/3-ways-to-fix-the-cors-error-and-how-access-control-allow-origin-works-d97d55946d9 
+    // https://github.com/Rob--W/cors-anywhere/#documentation
+    (function() {
+        var cors_api_host = 'cors-anywhere.herokuapp.com';
+        var cors_api_url = 'https://' + cors_api_host + '/';
+        var slice = [].slice;
+        var origin = window.location.protocol + '//' + window.location.host;
+        var open = XMLHttpRequest.prototype.open;
+        XMLHttpRequest.prototype.open = function() {
+            var args = slice.call(arguments);
+            var targetOrigin = /^https?:\/\/([^\/]+)/i.exec(args[1]);
+            if (targetOrigin && targetOrigin[0].toLowerCase() !== origin &&
+                targetOrigin[1] !== cors_api_host) {
+                args[1] = cors_api_url + args[1];
+            }
+            return open.apply(this, args);
+        };
+    })(); */
+
+    /*
+     // https://stackoverflow.com/questions/55980618/how-to-fetch-data-from-back-end 
+    fetch(url, { method: 'GET' }, 
+        function (res) {
+        return res.json()
+    })
+    //console.log(JSON.stringify(myJson))
+    */
+
+    // https://stackoverflow.com/questions/35553500/xmlhttprequest-cannot-load-xxx-no-access-control-allow-origin-header
+    //Access-Control-Allow-Origin: https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+*+from+pscomppars&format=json
+
+
+    // https://wilsjame.github.io/how-to-nasa/#:~:text=Head%20over%20to%20api.NASA,Astronomy%20Picture%20Of%20The%20Day
+    var proxy = "https://cors-anywhere.herokuapp.com/"
+    var proxy2 = "http://cors.io/?"
+    var url = "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=select+*+from+pscomppars&format=json"
+    var apikey = "50jiaKZWShuLw5q3QlC5vucCIWnxh4waOhFs3zHE"
+    var apod = "https://api.nasa.gov/planetary/apod"
+
+    // Load JSON data from the NASA API
+        //d3.json(url + "?api_key=" + apikey, 
+        //d3.json(proxy2 + url,
+
+    // https://stackoverflow.com/questions/17090642/d3-ignore-certain-row-in-csv
+            //var dirtyCSV = Data.responseText;
+            //var cleanCSV = dirtyCSV.split('\n').slice(96).join('\n');
+            //var parsedCSV = d3.csv.parse(cleanCSV);
+            //console.log(parsedCSV);
+            //console.log(ExoData[1]); 
+
+    //tileset
+        //yunzhao21.cl0ctgi5i0dwj21qcjm1ssjdb-53u0v
+
+

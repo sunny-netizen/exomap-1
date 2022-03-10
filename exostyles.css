@@ -1,0 +1,104 @@
+<style>
+
+    body { margin:0; padding:0; }
+    #map { position: absolute; top: 0px; bottom: 0px; width: 100%; };
+    
+    #title h2 {
+        line-height: 24px;
+        margin: 0;
+    }
+
+    #legend {
+        padding: 10px;
+        background-color: rgb(27, 27, 27);
+        color:rgb(253, 252, 252);
+        line-height: 18px;
+        position: absolute; 
+        /*top: 10px; 
+        left: 1200px;*/
+        width: 200px; 
+        height: 230px;
+    }
+
+    .map-overlay {
+        font: 12px/20px Verdana,'Helvetica Neue', Arial, Helvetica, sans-serif;
+        position: absolute;
+        width: 30%;
+        top: 0px;
+        left: 2px;
+        opacity: 0.85;
+        padding: 10px;
+    }
+    
+    .map-overlay .map-overlay-inner {
+        background-color: rgb(204, 203, 203);
+        border-radius: 3px;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+    
+    .map-overlay table {
+        border: none;
+        width: 100%;
+    }
+
+    .map-overlay h2 {
+        line-height: 24px;
+        display: block;
+        margin: 0 0 10px;
+    }
+    
+    .map-overlay label {
+        font: 18px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+        display: block;
+        vertical-align: middle;
+        margin: 0 0 0 10px;
+        padding: 0;
+    }
+    
+    .map-overlay input {
+        background-color: transparent;
+        display: inline-block;
+        width: 100%;
+        position: relative;
+        margin: 0;
+        cursor: ew-resize;
+    }
+
+    /* Legend */
+    .legend-key {
+        display: inline-block;
+        border-radius: 20%;
+        width: 10px;
+        height: 10px;
+        margin-right: 5px;
+    }
+
+    /* Popup */
+    .mapboxgl-popup {
+       max-width: 500px;
+       min-width: 260px;
+       font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+       padding: 0;
+       margin: 0,0,0,20px;
+       opacity: 0.9;
+    }
+    
+    .mapboxgl-popup-tip-container {
+        width:0px;
+        height:0px;
+        margin:0 auto;
+        position:relative;
+      }
+    
+    .mapboxgl-popup-tip {
+        width:0;
+        height:0;
+        margin:0;
+        border-left:0 solid transparent;
+        border-right:0 solid transparent;
+        border-top:0 solid transparent;
+        box-shadow:none;
+    }
+
+</style>
