@@ -1,7 +1,7 @@
 <style>
 
     body { margin:0; padding:0; }
-    #map { position: absolute; top: 0px; bottom: 0px; width: 100%; };
+    #map { position: absolute; top: 0px; bottom: 0px; width: 100%};
     
     #title h2 {
         line-height: 24px;
@@ -9,15 +9,13 @@
     }
 
     #legend {
-        padding: 10px;
         background-color: rgb(27, 27, 27);
         color:rgb(253, 252, 252);
-        line-height: 18px;
         position: absolute; 
-        /*top: 10px; 
-        left: 1200px;*/
+        line-height: 18px;
         width: 200px; 
         height: 230px;
+        padding: 10px;
     }
 
     .map-overlay {
@@ -43,6 +41,14 @@
     }
 
     .map-overlay h2 {
+        font: 18px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+        line-height: 24px;
+        display: block;
+        margin: 0 0 10px;
+    }
+
+    .map-overlay-inner h2 {
+        font: 18px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
         line-height: 24px;
         display: block;
         margin: 0 0 10px;
@@ -80,7 +86,7 @@
        min-width: 260px;
        font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
        padding: 0;
-       margin: 0,0,0,20px;
+       margin: 0,0,0,0px;
        opacity: 0.9;
     }
     

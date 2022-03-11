@@ -63,26 +63,25 @@
                 </tr>
             </table>
             <p class="credit">
-                4935 exoplanets confirmed as of March 3, 2022.
+                As of March 3, 2022, scientists have confirmed the existence of 4935 planets outside of our solar system. 
+                Slide to 2022 to see where more than one exoplanet orbits the same host star.
                 <br />Data:
                 <a href="https://exoplanetarchive.ipac.caltech.edu/">NASA Exoplanet Archive</a>
                 
             </p>
         </div>
-        <!---->
         <div class="map-overlay-inner" id='legend'>
-                <div><h2>Discovery Method</h2></div>
+            <div><h2>Discovery Method</h2></div>
             </div>
         </div>
     </div>
-    <!--<div class='map-overlay' id='legend'></div>-->
     <script>
         mapboxgl.accessToken = 'pk.eyJ1IjoieXVuemhhbzIxIiwiYSI6ImNreWxnbDR2ejF5MjIyd3AwNXA1cDl1eGsifQ.64sJi7Q8xOekHT7A6IljEQ';
         var map = new mapboxgl.Map({ // Load a new map in the 'map' HTML div
             container: 'map', // container id
             style: 'mapbox://styles/yunzhao21/cl0iom6ww005b14qkazxo4lyz', // Using the standard Mapbox Dark style
-            center: [0, 0], // starting position [lng, lat]
-            zoom: 2 // starting zoom
+            center: [175, 15], // starting position [lng, lat]
+            zoom: 1 // starting zoom
         });
         const years = [
             '1989', '1990',
@@ -119,20 +118,6 @@
             ];
         
         map.on('load', function (data) { // Load map
-            d3.json('ofrohn-d3-celestial/mw.json', function (mw) {
-                /* map.addSource('milkyway', { //Add the geojson to the map.
-                    'type': 'geojson',
-                    'data': mw
-                });
-                map.addLayer({
-                    id: 'milkyway-layer',
-                    type: 'fill',
-                    source: 'milkyway',
-                    paint: {
-                        'fill-color': '#0d0d0d'
-                    }
-                }); */
-            })
             d3.json('ofrohn-d3-celestial/constellations.lines.json', function (l) {
                 map.addSource('constellations_lines', { //Add the geojson to the map.
                     'type': 'geojson',
@@ -149,11 +134,8 @@
                     }
                 });
             })
-            d3.json('ofrohn-d3-celestial/constellations.lines.cn.json', function (lcn) {
-
-            })
             d3.json('ofrohn-d3-celestial/constellations.json', function (n) {
-                console.log(n)
+                //console.log(n)
                 map.addSource('constellations', { //Add the geojson to the map.
                     'type': 'geojson',
                     'data': n
@@ -173,15 +155,11 @@
                     }
                 });
             })
-            d3.json('ofrohn-d3-celestial/constellations.cn.json', function (ncn) {
-
-            })
             d3.csv("ExoData.csv", function (ExoData) {  // Load JSON data and work on data
                 //console.log(ExoData[0]);
                 var exoGeojson = {}; // Create new GeoJSON  
                 exoGeojson.type = 'FeatureCollection'; //Specify type is feature collection
                 exoGeojson.features = []; //Create features array
-
                 var i;
                 for (i = 0; i < ExoData.length; i++) { //Loop through all exoplanets
                     var newFeature = { //Create each exoplanet feature as JSON object
@@ -213,20 +191,17 @@
                     } //newFeature
                     //console.log(newFeature);
                     exoGeojson.features.push(newFeature); //Add the new feature to the features array 
-                } //for loop
-                //console.log(ExoData.long);
-                //console.log(exoGeojson);
-                
+                } //for loop             
 
-                map.addSource('ExoplanetGeojson', { //Add the geojson to the map.
+                map.addSource('ExoplanetGeojson', { //Add geojson to the map.
                     'type': 'geojson',
                     'data': exoGeojson,
                 });
-                map.addSource('clustered_planets', { //Add the geojson to the map.
+                map.addSource('clustered_planets', { //Add geojson to the map.
                     'type': 'geojson',
                     'data': exoGeojson,
                     'cluster': true,
-                    'clusterRadius': 1, // Radius of each cluster when clustering points (defaults to 50)
+                    'clusterRadius': 0.001  // to only include exoplanets with the same coordinates
                 });
                 map.addLayer({
                     id: 'Planets',
@@ -251,97 +226,99 @@
                             ]
                         },
                         'circle-opacity': 0.6,
-                        'circle-radius': 5
+                        'circle-radius': 6
                     } //paint
                 }) //addLayer
 
-                // Function for changing data year. Reference: https://docs.mapbox.com/mapbox-gl-js/example/timeline-animation/
+
+                // Slider function for changing data year. 
                 function setYear(year) {
                     document.getElementById('year').textContent = years[year];  // Set the label to the correct year
-                    var filters = ['<', 'disc_year', String(years[year])];
+                    var filters = ['<=', 'disc_year', String(years[year])];
                     map.setFilter('Planets', filters);
-                      
+
+                    if (year == 33) {
+                        map.addLayer({
+                            id: 'cluster-count',
+                            type: 'symbol',
+                            source: 'clustered_planets',
+                            filter: ['has', 'point_count'],
+                            layout: {
+                                'text-field': '{point_count_abbreviated}',
+                                'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
+                                'text-size': 12
+                            }
+                        })
+                    } else {
+                        if (map.getLayer('cluster-count')) map.removeLayer('cluster-count');
+                    }
 
                 }// setYear
 
-                // Reference: https://docs.mapbox.com/mapbox-gl-js/example/timeline-animation/
+                
                 setYear(0)
                 document.getElementById('slider').addEventListener('input', (e) => {
                     const year = parseInt(e.target.value); // year is the array index
                     setYear(year);
-
-                    var vis
-                    if (year == 33) {vis = "visible"} 
-                    else {vis = "none"}
-                    vis = "none"
-                    map.addLayer({
-                        id: 'cluster-count',
-                        type: 'symbol',
-                        source: 'clustered_planets',
-                        filter: ['has', 'point_count'],
-                        layout: {
-                            'text-field': '{point_count_abbreviated}',
-                            'text-font': ['DIN Offc Pro Medium', 'Arial Unicode MS Bold'],
-                            'text-size': 12,
-                            'visibility': vis
-                        }
-                    })
                 }); // EventListener
+
+                
 
             }) // d3.csv
 
-        // create legend
-        const legend = document.getElementById('legend');
-        layers.forEach((layer, i) => {
-        const color = colors[i];
-        const item = document.createElement('div');
-        const key = document.createElement('span');
-        key.className = 'legend-key';
-        key.style.backgroundColor = color;
+            // create legend
+            const legend = document.getElementById('legend');
+            layers.forEach((layer, i) => {
+            const color = colors[i];
+            const item = document.createElement('div');
+            const key = document.createElement('span');
+            key.className = 'legend-key';
+            key.style.backgroundColor = color;
 
-        const value = document.createElement('span');
-        value.innerHTML = `${layer}`;
-        item.appendChild(key);
-        item.appendChild(value);
-        legend.appendChild(item);
-        });
+            const value = document.createElement('span');
+            value.innerHTML = `${layer}`;
+            item.appendChild(key);
+            item.appendChild(value);
+            legend.appendChild(item);
+            });
 
         }) // map.on
 
-        var mypopup = new mapboxgl.Popup({ offset: [150, 50], closeButton: false });
-        // Event listener adds popup when the user puts their cursor over planets.
-        map.on('mouseover', 'Planets', function (e) {
-            mypopup.setLngLat(e.features[0].geometry.coordinates).setHTML(
-                "<h3>Planet Name: " + e.features[0].properties.pl_name +
-                //"</h3><b>Host Star Name: </b>" + e.features[0].hostname +
-                "</h3><b>Discovery Year: </b>" + e.features[0].properties.disc_year +
-                "<br /><b>Discovery Method: </b>" + e.features[0].properties.discoverymethod +
-                "<br /><b>Discovery Facility: </b>" + e.features[0].properties.disc_facility +
-                "<br /><b>Number of Stars: </b>" + e.features[0].properties.cb_flag +
-                "<br /><b>Number of Planets: </b>" + e.features[0].properties.cb_flag +
-                "<br /><b>Number of Moons: </b>" + e.features[0].properties.cb_flag +
-                "<br /><b>Circumbinary: </b>" + e.features[0].properties.cb_flag +
-                "<br /><b>Orbital Period [days]: </b>" + e.features[0].properties.pl_orbper +
-                "<br /><b>Planet Radius [Earth Radius]: </b>" + e.features[0].properties.pl_rade +
-                "<br /><b>Planet Radius [Jupiter Radius]: </b>" + e.features[0].properties.pl_radj +
-                "<br /><b>Planet Mass [Earth Mass]: </b>" + e.features[0].properties.pl_masse +
-                "<br /><b>Planet Mass [Jupiter Mass]: </b>" + e.features[0].properties.pl_massj +
-                "<br /><b>Planet Density [g/cm**3]: </b>" + e.features[0].properties.pl_dens +
-                "<br /><b>Host Spectral Type: </b>" + e.features[0].properties.st_spectype +
-                "<br /><b>Distance from Earth [parsecs]: </b>" + e.features[0].properties.sy_dist +
-                "<br /><b>RA [decimal]: </b>" + e.features[0].properties.ra +
-                "<br /><b>Dec [decimal]: </b>" + e.features[0].properties.dec
-            ).addTo(map);
-        });
-        // Change cursor to a pointer when  cursor is over a planet.
-        map.on('mouseenter', 'Planets', function () {
-            map.getCanvas().style.cursor = 'pointer';
-        });
-        // Change cursor back to a pointer when it leaves a planet and remove the popup window.
-        map.on('mouseleave', 'Planets', function () {
-            map.getCanvas().style.cursor = '';
-            mypopup.remove();
-        });
+
+    var mypopup = new mapboxgl.Popup({ offset: [150, 50], closeButton: false });
+    // Event listener adds popup when the user puts their cursor over planets.
+    map.on('mouseover', 'Planets', function (e) {
+        mypopup.setLngLat(e.features[0].geometry.coordinates
+        ).setHTML(
+            "<h3>Planet Name: " + e.features[0].properties.pl_name +
+            "</h3><b>Discovery Year: </b>" + e.features[0].properties.disc_year +
+            "<br /><b>Discovery Method: </b>" + e.features[0].properties.discoverymethod +
+            "<br /><b>Discovery Facility: </b>" + e.features[0].properties.disc_facility +
+            "<br /><b>Number of Stars: </b>" + e.features[0].properties.cb_flag +
+            "<br /><b>Number of Planets: </b>" + e.features[0].properties.cb_flag +
+            "<br /><b>Number of Moons: </b>" + e.features[0].properties.cb_flag +
+            "<br /><b>Circumbinary: </b>" + e.features[0].properties.cb_flag +
+            "<br /><b>Orbital Period [days]: </b>" + e.features[0].properties.pl_orbper +
+            "<br /><b>Planet Radius [Earth Radius]: </b>" + e.features[0].properties.pl_rade +
+            "<br /><b>Planet Radius [Jupiter Radius]: </b>" + e.features[0].properties.pl_radj +
+            "<br /><b>Planet Mass [Earth Mass]: </b>" + e.features[0].properties.pl_masse +
+            "<br /><b>Planet Mass [Jupiter Mass]: </b>" + e.features[0].properties.pl_massj +
+            "<br /><b>Planet Density [g/cm**3]: </b>" + e.features[0].properties.pl_dens +
+            "<br /><b>Host Spectral Type: </b>" + e.features[0].properties.st_spectype +
+            "<br /><b>Distance from Earth [parsecs]: </b>" + e.features[0].properties.sy_dist +
+            "<br /><b>RA [decimal]: </b>" + e.features[0].properties.ra +
+            "<br /><b>Dec [decimal]: </b>" + e.features[0].properties.dec
+        ).addTo(map);
+    });
+    // Change cursor to a pointer when  cursor is over a planet.
+    map.on('mouseenter', 'Planets', function () {
+        map.getCanvas().style.cursor = 'pointer';
+    });
+    // Change cursor back to a pointer when it leaves a planet and remove the popup window.
+    map.on('mouseleave', 'Planets', function () {
+        map.getCanvas().style.cursor = '';
+        mypopup.remove();
+    });
 
     </script>
 
@@ -349,11 +326,3 @@
 
 </html>
 
-<!--References
-constellations https://github.com/ofrohn/d3-celestial/tree/master/data
-build geojson
-timeslider
-cluster
-legend
-popup
--->
