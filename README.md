@@ -12,7 +12,7 @@ Hovering the cursor over a planet activates a Mapbox popup with the planet name 
 
 ## Sources and References
 -	NASA Exoplanet Archive: https://exoplanetarchive.ipac.caltech.edu/, https://exoplanetarchive.ipac.caltech.edu/docs/API_PS_columns.html
-- Celestial Background Map Source: https://github.com/ofrohn/d3-celestial/blob/master/data/constellations.lines.json
+- Celestial Background Map Source: https://github.com/ofrohn/d3-celestial/blob/master/data/constellations.lines.json, https://github.com/ofrohn/d3-celestial/blob/master/data/constellations.json
 - Converting longitude from right ascension: https://sciencing.com/calculate-longitude-right-ascension-6742230.html
 - Build GeoJSON with D3.JS: CASA0003
 - Time Slider: https://docs.mapbox.com/mapbox-gl-js/example/timeline-animation/
