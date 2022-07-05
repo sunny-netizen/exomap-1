@@ -1,4 +1,4 @@
 # sunny-netizen.github.io
 
 
-source: constellations https://github.com/ofrohn/d3-celestial
+Celestial Background Map Source: https://github.com/ofrohn/d3-celestial/blob/master/data/constellations.lines.json
