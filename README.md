@@ -1,3 +1,5 @@
+# ExoMap
+
 Exomap is a celestial map of exoplanets accessible via an HTML/Javascript page. Its interactivity it engages users in the discovery of exoplanets, enabling astronomy-enthusiasts to better understand the where, when, and how of exoplanet detection through their own exploration. The exoplanet data comes from NASA’s Exoplanet Archive, downloaded on March 3, 2022, as a CSV. I used Python to subset exoplanet entries recognized as having default parameters to avoid duplicate planets and calculated longitude from right ascension and latitude from declination. I used d3 to load this cleansed CSV data and build a geojson compatible with Mapbox.
 
 Exomap does not reflect actual distances between exoplanets but rather where exoplanets appear with telescopic vision from earth. A custom black Mapbox stylesheet forms the base layer of the night sky. Layered over it is a JSON of constellations (from western culture) sourced from Olaf Frohn’s Github. The constellation background provides familiarity for users, context for the location of exoplanets appearing in the celestial sphere. This homocentric perspective of ‘looking up’ at a wider universe resonates with the theme “Local to Global”. 
@@ -8,29 +10,12 @@ The legend on the left of the screen indicates that different exoplanet symbol h
 
 Hovering the cursor over a planet activates a Mapbox popup with the planet name and various details. Unfortunately for co-coordinate exoplanets, a popup activates only for one planet. Overall, Exomap shows both global trends of exoplanets and specific, local details about each planet.
 
-
-Github Page: sunny-netizen.github.io
-Github Folder: https://github.com/sunny-netizen/sunny-netizen.github.io.git
-Sources and References
-•	NASA Exoplanet Archive
-o	https://exoplanetarchive.ipac.caltech.edu/ 
-o	https://exoplanetarchive.ipac.caltech.edu/docs/API_PS_columns.html
-•	Constellations
-o	https://github.com/ofrohn/d3-celestial/tree/master/data, Celestial Background Map Source: https://github.com/ofrohn/d3-celestial/blob/master/data/constellations.lines.json
-•	Data Wrangling
-o	https://sciencing.com/calculate-longitude-right-ascension-6742230.html
-•	Build GeoJSON with d3
-o	CASA0003
-•	Time Slider
-o	https://docs.mapbox.com/mapbox-gl-js/example/timeline-animation/
-•	Clusters
-o	https://docs.mapbox.com/mapbox-gl-js/example/cluster/
-•	Legend
-o	https://docs.mapbox.com/help/tutorials/choropleth-studio-gl-pt-2/
-•	Popup
-o	https://docs.mapbox.com/mapbox-gl-js/example/popup-on-hover/
-o	https://gis.stackexchange.com/questions/253694/combining-popup-info-from-overlapping-polygons-in-mapbox-gl-js
-
-
-
-
+## Sources and References
+-	NASA Exoplanet Archive: https://exoplanetarchive.ipac.caltech.edu/, https://exoplanetarchive.ipac.caltech.edu/docs/API_PS_columns.html
+- Celestial Background Map Source: https://github.com/ofrohn/d3-celestial/blob/master/data/constellations.lines.json
+- Converting longitude from right ascension: https://sciencing.com/calculate-longitude-right-ascension-6742230.html
+- Build GeoJSON with D3.JS: CASA0003
+- Time Slider: https://docs.mapbox.com/mapbox-gl-js/example/timeline-animation/
+- Planet Clusters: https://docs.mapbox.com/mapbox-gl-js/example/cluster/
+- Legend: https://docs.mapbox.com/help/tutorials/choropleth-studio-gl-pt-2/
+- Popup: https://docs.mapbox.com/mapbox-gl-js/example/popup-on-hover/, https://gis.stackexchange.com/questions/253694/combining-popup-info-from-overlapping-polygons-in-mapbox-gl-js
