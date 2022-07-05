@@ -118,7 +118,7 @@
             ];
         
         map.on('load', function (data) { // Load map
-            d3.json('https://github.com/ofrohn/d3-celestial/blob/master/data/constellations.lines.json', function (l) {  // ofrohn-d3-celestial/constellations.lines.json
+            d3.json('https://raw.githubusercontent.com/ofrohn/d3-celestial/master/data/constellations.lines.json', function (l) {
                 map.addSource('constellations_lines', { //Add the geojson to the map.
                     'type': 'geojson',
                     'data': l
@@ -134,7 +134,7 @@
                     }
                 });
             })
-            d3.json('ofrohn-d3-celestial/constellations.json', function (n) {
+            d3.json('https://raw.githubusercontent.com/ofrohn/d3-celestial/master/data/constellations.json', function (n) {
                 //console.log(n)
                 map.addSource('constellations', { //Add the geojson to the map.
                     'type': 'geojson',
